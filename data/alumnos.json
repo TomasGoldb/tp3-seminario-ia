@@ -34,6 +34,26 @@
       "nombre": "Ricardo",
       "apellido": "Pepaso",
       "curso": "5C"
+    },
+    {
+      "nombre": "Ricardo montaner",
+      "apellido": "montaner",
+      "curso": "4D"
+    },
+    {
+      "nombre": "Ricardo Montaner",
+      "apellido": "Montaner",
+      "curso": "4D"
+    },
+    {
+      "nombre": "Tomás Goldberg",
+      "apellido": "Goldingberg",
+      "curso": "5C"
+    },
+    {
+      "nombre": "Tomás",
+      "apellido": "Goldberg",
+      "curso": "5C"
     }
   ]
 }
