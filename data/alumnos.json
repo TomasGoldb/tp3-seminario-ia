@@ -54,6 +54,16 @@
       "nombre": "Tomás",
       "apellido": "Goldberg",
       "curso": "5C"
+    },
+    {
+      "nombre": "Abril",
+      "apellido": "Varela",
+      "curso": "2A"
+    },
+    {
+      "nombre": "Abril",
+      "apellido": "Varela",
+      "curso": "2A"
     }
   ]
 }

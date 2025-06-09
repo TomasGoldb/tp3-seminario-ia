@@ -4,6 +4,8 @@ import { tool, agent } from 'llamaindex';
 import { Ollama } from '@llamaindex/ollama';
 import { z } from 'zod';
 import { Estudiantes } from './lib/estudiantes.js';
+import './main.js'
+import cors from "cors";
 
 // Configuración
 const DEBUG = false;
@@ -133,9 +135,11 @@ const elAgente = agent({
 });
 
 const app = express();
+app.use(cors());
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
+
 
 app.post('/api/chat', async (req, res) => {
     try {
@@ -145,8 +149,9 @@ app.post('/api/chat', async (req, res) => {
         }
         // El agente responde con un string
         const respuesta = await elAgente.run(prompt);
+        const answer=formatearRespuesta(JSON.stringify(respuesta));
         // Si el resultado es objeto, convertir a string
-        res.json({ respuesta: typeof respuesta === 'string' ? respuesta : JSON.stringify(respuesta) });
+        res.json({ respuesta: typeof respuesta === 'string' ? respuesta : answer });
     } catch (error) {
         res.status(500).json({ error: error.message || 'Error interno del servidor' });
     }
@@ -157,3 +162,39 @@ app.listen(PORT, () => {
     console.log(`Servidor Express escuchando en el puerto ${PORT}`);
     console.log(`Accede a la API en: http://localhost:${PORT}/api/chat`);
 });
+
+
+const formatearRespuesta=(rawResponse) =>{
+    // Paso 1: si recibimos un objeto con .respuesta, tomar ese campo, si no, usar el string directamente
+    let respuestaStr = rawResponse;
+    if (typeof rawResponse === 'object' && rawResponse.respuesta) {
+        respuestaStr = rawResponse.respuesta;
+    }
+
+    // Paso 2: el campo respuesta es un string con JSON anidado, así que lo parseamos
+    let resObj;
+    try {
+        resObj = JSON.parse(respuestaStr);
+    } catch {
+        // Si no es JSON, devolver el string tal cual
+        return respuestaStr;
+    }
+
+    // Paso 3: buscamos el camino: data.result
+    let textoFinal = "";
+    if (resObj && resObj.data && typeof resObj.data.result === "string") {
+        textoFinal = resObj.data.result.trim();
+    } else {
+        // fallback
+        textoFinal = JSON.stringify(resObj, null, 2);
+    }
+
+    // Paso 4: elimina todo lo que esté dentro de <think>...</think>
+    textoFinal = textoFinal.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
+
+    // Paso 5: elimina dobles saltos de línea redundantes
+    textoFinal = textoFinal.replace(/\n{3,}/g, "\n\n");
+
+    // Opcional: si termina con "Nota: ..." lo dejamos, si no, solo devolvemos el bloque limpio.
+    return textoFinal;
+}

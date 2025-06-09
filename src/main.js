@@ -134,6 +134,3 @@ const elAgente = agent({
     systemPrompt: systemPrompt,
 });
 
-
-// Iniciar el chat
-empezarChat(elAgente, mensajeBienvenida);

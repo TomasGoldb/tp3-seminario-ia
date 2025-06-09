@@ -11,6 +11,7 @@
   "dependencies": {
     "@llamaindex/ollama": "^0.1.5",
     "chalk": "^5.4.1",
+    "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "llamaindex": "^0.10.6",
